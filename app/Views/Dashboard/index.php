@@ -1,1 +1,0 @@
-<h1>ini Dashboard cuy</h1>

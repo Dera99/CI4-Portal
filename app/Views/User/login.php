@@ -8,8 +8,17 @@
                 <?= $message; ?>
             </div>
         <?php endif; ?>
+        <?php if (session('validation')) : ?>
+            <div class="alert alert-danger ">
+                <ul>
+                    <?php foreach (session('validation')->getErrors() as $error) : ?>
+                        <li><?= esc($error) ?></li>
+                    <?php endforeach ?>
+                </ul>
+            </div>
+        <?php endif ?>
         <div class="col-md-10 pt-4 mb-4">
-            <form method="post" action="/user/login/auth">
+            <form method="post" action="/user/login/auth" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email address</label>
                     <input type="email" class="form-control" name="email" id="email" required autofocus>

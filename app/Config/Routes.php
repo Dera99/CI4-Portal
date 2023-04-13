@@ -37,9 +37,9 @@ $routes->post('/user/login/auth', 'UserController::loginAuth');
 $routes->get('/user/request-password', 'UserController::requestOTP');
 $routes->get('/user/reset-password', 'UserController::resetPassword');
 $routes->get('/user/register', 'UserController::register');
-$routes->post('/user/register/save', 'UserController::save');
+$routes->post('/user/register/save', 'UserController::store');
 
-$routes->get('/dashboard', 'UserController::dashboard');
+$routes->get('/user/dashboard', 'DashboardController::index');
 
 /*
  * --------------------------------------------------------------------
