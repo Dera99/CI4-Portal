@@ -28,7 +28,7 @@
                     <input type="password" class="form-control" name="password" id="password" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
-                <a class="ms-3" href="/user/request-password">Forgot Password ?</a>
+                <a class="ms-3" href="/user/recovery">Forgot Password ?</a>
             </form>
         </div>
     </div>

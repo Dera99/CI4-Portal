@@ -3,28 +3,29 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
+use App\Models\UserRecovery;
 
 
 class UserController extends BaseController
 {
     protected $UserModel;
-    protected $helpers;
+    protected $UserRecovery;
+    protected $helpers = ['form'];
+    private $email;
+
     public function __construct()
     {
         $this->UserModel = new UserModel();
+        $this->UserRecovery = new UserRecovery();
     }
 
     public function register()
     {
-        session();
         $session = \Config\Services::session();
         $data = [
             'title' => 'Register Account',
             'message' => $session->getFlashdata('message'),
-            'validation' => $session->getFlashdata('validation'),
-            'fullname' => $session->get('fullname'),
             'isLogin' => $session->get('isLogin'),
-            'profile' => $session->get('profile')
         ];
         return view('User/register', $data);
     }
@@ -34,33 +35,30 @@ class UserController extends BaseController
         $data = [
             'title' => 'Login-DAG News',
             'message' => $session->getFlashdata('message'),
-            'fullname' => $session->get('fullname'),
             'isLogin' => $session->get('isLogin'),
-            'profile' => $session->get('profile')
         ];
         return view('User/login', $data);
     }
     public function store()
     {
         //validasi input
-        session();
         $session = \Config\Services::session();
         if (!$this->validate([
             'fullname' => 'required',
             'email' => 'required|valid_email|is_unique[user.email]',
             'password' => 'required|min_length[8]',
-            'profile' =>  'max_dims[profile,500,500]|uploaded[profile]|mime_in[profile,image/jpg,image/jpeg,image/png,image/webp]|ext_in[profile,jpg,jpeg,png,webp]|max_size[profile,1024]'
         ])) {
-            $validation = \Config\Services::validation();
-            $session->setFlashdata('validation', $validation->listErrors());
-            return redirect()->to('user/register');
+            return redirect()->back()->withInput();
         }
-
 
         $password = password_hash($this->request->getVar('password'), PASSWORD_DEFAULT);
         $profile = $this->request->getFile('profile');
-        $profileName = $profile->getRandomName();
-        $profile->move(ROOTPATH . 'public/uploads/profiles/', $profileName);
+        if ($profile && $profile->isValid()) {
+            $profileName = $profile->getFilename();
+            $profile->move(ROOTPATH . 'public/uploads/profiles/', $profileName);
+        } else {
+            $profileName = '';
+        }
 
         $data = [
             'email' => $this->request->getVar('email'),
@@ -78,22 +76,121 @@ class UserController extends BaseController
             return redirect()->back();
         }
     }
-    public function requestOTP()
+    public function recovery()
     {
+        $session = \Config\Services::session();
+        $userRecovery =  new \App\Models\UserRecovery();
         $data = [
-            'title' => 'Reset Password'
+            'title' => 'Recovery Password',
+            'isLogin' => $session->get('isLogin'),
+            'message' => $session->getFlashdata('message'),
+            'token' => $session->getFlashdata('token'),
+            'email' => $session->getFlashdata('email'),
+        ];
+        return view('User/recovery', $data);
+    }
+    public function requestToken()
+    {
+        $session = \Config\Services::session();
+        $userModel =  new \App\Models\UserModel();
+        $userRecovery =  new \App\Models\UserRecovery();
+        $token = rand(1000000, 9999999);
+        $email = $this->request->getVar('email');
 
+        $rules = [
+            'email' => 'required|valid_email',
+        ];
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput();
+        }
+        $user = [
+            'email' => $email,
+            'token' => $token
         ];
 
-        return view('User/request_password', $data);
+        $userCheck = $userModel->where('email', $email)->first();
+        $session->setFlashdata('token', $token);
+        if (!empty($userCheck['email'])) {
+            $getToken = $userRecovery->insert($user);
+            if ($getToken) {
+                $session->setFlashdata('message', 'Token Berhasil Dikirimkan, Silahakan Check Database !');
+                $session->setFlashdata('email', $email);
+                return redirect()->back()->withInput();
+            } else {
+                $session->setFlashdata('message', 'Token Tidak Tersedia !');
+                return redirect()->back()->withInput();
+            }
+        }
+    }
+    public function validateToken()
+    {
+        $session = \Config\Services::session();
+        $userRecovery =  new \App\Models\UserRecovery();
+        $token = $this->request->getVar('token');
+        $tokenCheck = $userRecovery->where('token', $token)->first();
+        $email = $this->request->getVar('email');
+        $rules = [
+            'token' => 'required'
+        ];
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput();
+        }
+        if (!empty($tokenCheck['token'])) {
+            $userRecovery->where('token', $token)->delete();
+            return redirect()->to('/user/recovery/reset/' . $email . '/' . $token);
+        }
+        return redirect()->back()->withInput();
+    }
+    public function recoveryPassword($email, $token)
+    {
+        $session = \Config\Services::session();
+        $data = [
+            'title' => 'Reset Password',
+            'isLogin' => $session->get('isLogin'),
+            'message' => $session->getFlashdata('message'),
+            'token' => $token,
+            'email' => $email
+        ];
+        return view('user/reset_password', $data);
     }
     public function resetPassword()
     {
-        $data = [
-            'title' => 'Reset Password'
+        $session = \Config\Services::session();
+        $userModel =  new \App\Models\UserModel();
+        $userRecovery =  new \App\Models\UserRecovery();
+        $email = $this->request->getVar('email');
+        $token = $this->request->getVar('token');
+        $password = $this->request->getVar('password');
+        $password2 = $this->request->getVar('password2');
+        $rules = [
+            'password' => [
+                'label' => 'Password',
+                'rules' => 'required|min_length[8]'
+            ],
+            'password2' => [
+                'label' => 'Confirm Password',
+                'rules' => 'required|matches[password]'
+            ]
         ];
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput();
+        }
+        $userId = $userModel->where('email', $email)->first();
+        if (!empty($userId['id'])) {
+            $passwordHash = password_hash($password2, PASSWORD_DEFAULT);
+            $data = [
+                'password' => $passwordHash
+            ];
+            $update = $userModel->update($userId['id'], $data);
+            if ($update) {
 
-        return view('User/reset_password', $data);
+                $session->setFlashdata('message', 'Update Password Berhasil !');
+                return redirect()->to('user/login')->withInput();
+            } else {
+                $session->setFlashdata('message', 'Update Password Gagal !');
+                return redirect()->back()->withInput();
+            }
+        }
     }
     public function loginAuth()
     {

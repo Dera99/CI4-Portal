@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class PasswordResetToken extends Model
+class UserRecovery extends Model
 {
     protected $table = 'password_reset_tokens';
 
@@ -14,6 +14,9 @@ class PasswordResetToken extends Model
         'email',
         'token',
         'created_at',
+        'updated_at'
     ];
+    protected $createdField  = 'created_at';
+    protected $updatedField  = 'updated_at';
     protected $useTimestamps = true;
 }

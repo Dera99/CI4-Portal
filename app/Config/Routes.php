@@ -35,8 +35,11 @@ $routes->get('/about', 'HomeController::about');
 $routes->get('/user/login', 'UserController::login');
 $routes->get('/user/logout', 'UserController::logout');
 $routes->post('/user/login/auth', 'UserController::loginAuth');
-$routes->get('/user/request-password', 'UserController::requestOTP');
-$routes->get('/user/reset-password', 'UserController::resetPassword');
+$routes->get('/user/recovery', 'UserController::recovery');
+$routes->post('/user/recovery', 'UserController::requestToken');
+$routes->post('/user/recovery/reset/(:any)', 'UserController::validateToken');
+$routes->get('/user/recovery/reset/(:any)/(:any)', 'UserController::recoveryPassword/$1/$2');
+$routes->post('/user/recovery/reset', 'UserController::resetPassword');
 $routes->get('/user/register', 'UserController::register');
 $routes->post('/user/register/save', 'UserController::store');
 
