@@ -6,8 +6,12 @@ class HomeController extends BaseController
 {
     public function index()
     {
+        $session = \Config\Services::session();
         $data = [
-            'title' => 'DAG News'
+            'title' => 'DAG News',
+            'fullname' => $session->get('fullname'),
+            'isLogin' => $session->get('isLogin'),
+            'profile' => $session->get('profile')
         ];
         return view('pages/home', $data);
     }

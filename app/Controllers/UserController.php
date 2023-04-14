@@ -4,10 +4,11 @@ namespace App\Controllers;
 
 use App\Models\UserModel;
 
+
 class UserController extends BaseController
 {
     protected $UserModel;
-
+    protected $helpers;
     public function __construct()
     {
         $this->UserModel = new UserModel();
@@ -15,11 +16,15 @@ class UserController extends BaseController
 
     public function register()
     {
+        session();
         $session = \Config\Services::session();
         $data = [
             'title' => 'Register Account',
             'message' => $session->getFlashdata('message'),
-            'validation' => \Config\Services::validation()
+            'validation' => $session->getFlashdata('validation'),
+            'fullname' => $session->get('fullname'),
+            'isLogin' => $session->get('isLogin'),
+            'profile' => $session->get('profile')
         ];
         return view('User/register', $data);
     }
@@ -38,15 +43,17 @@ class UserController extends BaseController
     public function store()
     {
         //validasi input
+        session();
         $session = \Config\Services::session();
         if (!$this->validate([
             'fullname' => 'required',
             'email' => 'required|valid_email|is_unique[user.email]',
             'password' => 'required|min_length[8]',
-            'profile' =>  'required|uploaded[profile]|mime_in[profile,image/jpg,image/jpeg,image/png]|max_size[profile,1024]'
+            'profile' =>  'max_dims[profile,500,500]|uploaded[profile]|mime_in[profile,image/jpg,image/jpeg,image/png,image/webp]|ext_in[profile,jpg,jpeg,png,webp]|max_size[profile,1024]'
         ])) {
             $validation = \Config\Services::validation();
-            return redirect()->to('user/register')->withInput()->with('validation', $validation);
+            $session->setFlashdata('validation', $validation->listErrors());
+            return redirect()->to('user/register');
         }
 
 
@@ -75,6 +82,7 @@ class UserController extends BaseController
     {
         $data = [
             'title' => 'Reset Password'
+
         ];
 
         return view('User/request_password', $data);
@@ -101,10 +109,16 @@ class UserController extends BaseController
                 $session->set('isLogin', true);
                 $session->set('fullname', $fullname);
                 $session->set('profile', $profile);
-                return redirect()->to('/user/dashboard')->withInput();
+                return redirect()->to('/user/dashboard');
             } else {
                 return redirect()->back();
             }
         }
+    }
+    public function logout()
+    {
+        $session = \Config\Services::session();
+        $session->destroy();
+        return redirect()->to('user/login');
     }
 }

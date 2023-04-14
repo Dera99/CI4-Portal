@@ -4,19 +4,14 @@
     <div class="row mt-4 justify-content-center align-items-center bg-light text-dark pt-4 rounded">
         <h2 class="text-center">Register</h2>
         <?php if (isset($message) && !empty($message)) : ?>
-            <div class="alert alert-danger text-center" role="alert">
+            <div class="alert alert-danger" role="alert">
                 <?= $message; ?>
             </div>
-        <?php endif; ?>
-        <?php if (session('validation')) : ?>
-            <div class="alert alert-danger ">
-                <ul>
-                    <?php foreach (session('validation')->getErrors() as $error) : ?>
-                        <li><?= esc($error) ?></li>
-                    <?php endforeach ?>
-                </ul>
+        <?php elseif (isset($validation) && !empty($validation)) : ?>
+            <div class="alert alert-danger" role="alert">
+                <?= $validation; ?>
             </div>
-        <?php endif ?>
+        <?php endif; ?>
         <div class="col-md-10 pt-4 mb-4">
             <form method="post" action="/user/register/save" enctype="multipart/form-data">
                 <?= csrf_field(); ?>

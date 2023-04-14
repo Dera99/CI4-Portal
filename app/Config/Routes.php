@@ -33,6 +33,7 @@ $routes->get('/', 'HomeController::index');
 $routes->get('/about', 'HomeController::about');
 
 $routes->get('/user/login', 'UserController::login');
+$routes->get('/user/logout', 'UserController::logout');
 $routes->post('/user/login/auth', 'UserController::loginAuth');
 $routes->get('/user/request-password', 'UserController::requestOTP');
 $routes->get('/user/reset-password', 'UserController::resetPassword');
