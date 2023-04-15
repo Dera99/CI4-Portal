@@ -21,15 +21,11 @@ class News extends Migration
             'description' => [
                 'type' => 'TEXT',
             ],
-            'category' => [
-                'type' => 'VARCHAR',
-                'constraint' => 255,
-            ],
             'author' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,
             ],
-            'image' => [
+            'images' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,
             ],

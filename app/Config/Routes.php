@@ -44,6 +44,7 @@ $routes->get('/user/register', 'UserController::register');
 $routes->post('/user/register/save', 'UserController::store');
 
 $routes->get('/user/dashboard', 'DashboardController::index');
+$routes->post('/user/dashboard', 'DashboardController::store');
 
 /*
  * --------------------------------------------------------------------

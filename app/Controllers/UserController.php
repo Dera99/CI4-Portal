@@ -217,6 +217,7 @@ class UserController extends BaseController
                 $session->set('isLogin', true);
                 $session->set('fullname', $fullname);
                 $session->set('profile', $profile);
+                $session->set('email', $user['email']);
                 return redirect()->to('/user/dashboard');
             } else {
                 return redirect()->back();

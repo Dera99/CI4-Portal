@@ -14,9 +14,16 @@ class News extends Model
     protected $allowedFields = [
         'title',
         'description',
-        'category',
         'author',
-        'image'
+        'images'
     ];
     protected $useTimestamps = true;
+    public function getPosts()
+    {
+        $builder = $this->db->table('news');
+        $builder->select('*');
+        $builder->join('user', 'user.email = news.author');
+        $query = $builder->get();
+        return $query->getResult();
+    }
 }
