@@ -20,7 +20,9 @@
                     <li class="nav-item dropdown">
                         <a class=" nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <p class="m-2"><?= $fullname; ?></p>
-                            <img src="<?= base_url('uploads/profiles/' . $profile); ?>" class="rounded-circle" height="40" alt="Avatar" loading="lazy" />
+                            <div class="container-fluid">
+                                <img src="<?= base_url('uploads/profiles/' . $profile); ?>" class="rounded-circle" height="40" alt="Avatar" loading="lazy" />
+                            </div>
                         </a>
                         <ul class="dropdown-menu">
                             <li>
