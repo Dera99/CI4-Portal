@@ -5,13 +5,13 @@ namespace App\Controllers;
 use App\Models\UserModel;
 use App\Models\UserRecovery;
 
+use Config\Images;
 
 class UserController extends BaseController
 {
     protected $UserModel;
     protected $UserRecovery;
     protected $helpers = ['form'];
-    private $email;
 
     public function __construct()
     {
@@ -27,6 +27,9 @@ class UserController extends BaseController
             'message' => $session->getFlashdata('message'),
             'isLogin' => $session->get('isLogin'),
         ];
+        if ($session->get('isLogin')) {
+            return redirect()->to('/user/dashboard'); // alihkan ke halaman dashboard jika sudah login
+        }
         return view('User/register', $data);
     }
     public function login()
@@ -36,30 +39,31 @@ class UserController extends BaseController
             'title' => 'Login-DAG News',
             'message' => $session->getFlashdata('message'),
             'isLogin' => $session->get('isLogin'),
+            'profile' => $session->get('profile'),
+            'fullname' => $session->get('fullname'),
         ];
+        if ($session->get('isLogin')) {
+            return redirect()->to('/user/dashboard'); // alihkan ke halaman dashboard jika sudah login
+        }
+        // tampilkan halaman login jika belum login
         return view('User/login', $data);
     }
     public function store()
     {
-        //validasi input
+        session();
         $session = \Config\Services::session();
         if (!$this->validate([
             'fullname' => 'required',
             'email' => 'required|valid_email|is_unique[user.email]',
             'password' => 'required|min_length[8]',
+            'profile' =>  'is_image[profile]|uploaded[profile]|mime_in[profile,image/jpg,image/jpeg,image/png,image/webp]|ext_in[profile,jpg,jpeg,png,webp]|max_size[profile,1024]'
         ])) {
             return redirect()->back()->withInput();
         }
-
         $password = password_hash($this->request->getVar('password'), PASSWORD_DEFAULT);
         $profile = $this->request->getFile('profile');
-        if ($profile && $profile->isValid()) {
-            $profileName = $profile->getFilename();
-            $profile->move(ROOTPATH . 'public/uploads/profiles/', $profileName);
-        } else {
-            $profileName = '';
-        }
-
+        $profileName = $profile->getRandomName();
+        $profile->move(ROOTPATH . 'public/uploads/profiles/', $profileName);
         $data = [
             'email' => $this->request->getVar('email'),
             'fullname' => $this->request->getVar('fullname'),
@@ -67,7 +71,6 @@ class UserController extends BaseController
             'profile' => $profileName
         ];
         $addUser = $this->UserModel->insert($data);
-
         if ($addUser) {
             $session->setFlashdata('message', 'Registrasi Berhasil');
             return redirect()->to('/user/login');
@@ -87,6 +90,9 @@ class UserController extends BaseController
             'token' => $session->getFlashdata('token'),
             'email' => $session->getFlashdata('email'),
         ];
+        if ($session->get('isLogin')) {
+            return redirect()->to('/user/dashboard'); // alihkan ke halaman dashboard jika sudah login
+        }
         return view('User/recovery', $data);
     }
     public function requestToken()
@@ -121,6 +127,8 @@ class UserController extends BaseController
                 return redirect()->back()->withInput();
             }
         }
+        $session->setFlashdata('message', 'Token Tidak Tersedia !');
+        return redirect()->back()->withInput();
     }
     public function validateToken()
     {
@@ -151,6 +159,9 @@ class UserController extends BaseController
             'token' => $token,
             'email' => $email
         ];
+        if ($session->get('isLogin')) {
+            return redirect()->to('/user/dashboard'); // alihkan ke halaman dashboard jika sudah login
+        }
         return view('user/reset_password', $data);
     }
     public function resetPassword()
