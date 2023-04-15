@@ -29,14 +29,18 @@ class DashboardController extends BaseController
         $rules = [
             'title' => 'required',
             'description' => 'required',
-            'picture' =>  'is_image[picture]|uploaded[picture]|mime_in[picture,image/jpg,image/jpeg,image/png,image/webp]|ext_in[picture,jpg,jpeg,png,webp]'
+            'picture' =>  'mime_in[picture,image/jpg,image/jpeg,image/png,image/webp]|ext_in[picture,jpg,jpeg,png,webp]'
         ];
         if (!$this->validate($rules)) {
             return redirect()->back()->withInput();
         }
         $picture = $this->request->getFile('picture');
-        $pictureName = $picture->getRandomName();
-        $picture->move(ROOTPATH . 'public/uploads/posts/', $pictureName);
+        if ($picture && $picture->isValid()) {
+            $pictureName = $picture->getRandomName();
+            $picture->move(ROOTPATH . 'public/uploads/posts/', $pictureName);
+        } else {
+            $pictureName = '';
+        }
         $data = [
             'author' => $author,
             'title' => $title,
