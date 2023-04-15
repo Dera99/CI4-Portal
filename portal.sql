@@ -11,7 +11,7 @@
  Target Server Version : 100424
  File Encoding         : 65001
 
- Date: 12/04/2023 16:27:45
+ Date: 15/04/2023 12:52:40
 */
 
 SET NAMES utf8mb4;
@@ -30,14 +30,14 @@ CREATE TABLE `migrations`  (
   `time` int NOT NULL,
   `batch` int UNSIGNED NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of migrations
 -- ----------------------------
-INSERT INTO `migrations` VALUES (8, '2023-04-12-042638', 'App\\Database\\Migrations\\Users', 'default', 'App', 1681285008, 1);
-INSERT INTO `migrations` VALUES (9, '2023-04-12-043550', 'App\\Database\\Migrations\\PasswordResetTokens', 'default', 'App', 1681285009, 1);
-INSERT INTO `migrations` VALUES (10, '2023-04-12-044252', 'App\\Database\\Migrations\\News', 'default', 'App', 1681285009, 1);
+INSERT INTO `migrations` VALUES (32, '2023-04-12-042638', 'App\\Database\\Migrations\\Users', 'default', 'App', 1681535672, 1);
+INSERT INTO `migrations` VALUES (33, '2023-04-12-043550', 'App\\Database\\Migrations\\PasswordResetTokens', 'default', 'App', 1681535672, 1);
+INSERT INTO `migrations` VALUES (34, '2023-04-12-044252', 'App\\Database\\Migrations\\News', 'default', 'App', 1681535672, 1);
 
 -- ----------------------------
 -- Table structure for news
@@ -47,17 +47,23 @@ CREATE TABLE `news`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `description` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `category` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `author` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `image` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `images` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `created_at` datetime NULL DEFAULT NULL,
   `updated_at` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of news
 -- ----------------------------
+INSERT INTO `news` VALUES (1, 'dera Testing Read Post', 'D4G Dev', 'deraabdulgani@gmail.com', '1681536635_94cc24b62167058e704b.jpg', '2023-04-15 05:30:35', '2023-04-15 05:30:35');
+INSERT INTO `news` VALUES (2, 'Mantap Coy', '2312', 'deraabdulgani@gmail.com', '1681536795_249d7325465fa75cf0d3.jpg', '2023-04-15 05:33:15', '2023-04-15 05:33:15');
+INSERT INTO `news` VALUES (3, 'generator', 'GEGE GEMING', 'deraabdulgani@gmail.com', '1681536806_2ec0ef151f27752083c9.jpg', '2023-04-15 05:33:26', '2023-04-15 05:33:26');
+INSERT INTO `news` VALUES (4, 'Testing', 'Banyak Posting ', 'deraabdulgani@gmail.com', '1681536822_0c5cbf0685bb917b560a.jpg', '2023-04-15 05:33:42', '2023-04-15 05:33:42');
+INSERT INTO `news` VALUES (5, 'Testing', 'Banyak Posting ', 'deraabdulgani@gmail.com', '1681536822_0c5cbf0685bb917b560a.jpg', '2023-04-15 05:33:42', '2023-04-15 05:33:42');
+INSERT INTO `news` VALUES (6, 'Testing', 'Banyak Posting ', 'deraabdulgani@gmail.com', '1681536822_0c5cbf0685bb917b560a.jpg', '2023-04-15 05:33:42', '2023-04-15 05:33:42');
+INSERT INTO `news` VALUES (7, 'Testing', 'Banyak Posting ', 'deraabdulgani@gmail.com', '1681536822_0c5cbf0685bb917b560a.jpg', '2023-04-15 05:33:42', '2023-04-15 05:33:42');
 
 -- ----------------------------
 -- Table structure for password_reset_tokens
@@ -68,6 +74,7 @@ CREATE TABLE `password_reset_tokens`  (
   `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `token` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `created_at` datetime NULL DEFAULT NULL,
+  `updated_at` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
@@ -83,20 +90,16 @@ CREATE TABLE `user`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
   `fullname` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `profile` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `created_at` datetime NULL DEFAULT NULL,
   `updated_at` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (1, 'dera', 'dera@gmail.com', '686dbb08210a2dbe53eb739f913f9db62aba47d1e0a2fb3a1b4d6bb91d4b4d08', '2023-04-12 07:50:18', '2023-04-12 07:50:18');
-INSERT INTO `user` VALUES (2, 'Deraa Abdul', 'dag@gmail.com', '$2y$10$6lHYgZ/mRthywcarrLsysO7u2U44T54ZtUWkIJEIt.8JsJX0nY7By', '2023-04-12 08:14:01', '2023-04-12 08:14:01');
-INSERT INTO `user` VALUES (3, 'zxczxcz', 'ddasda@gmail.com', '$2y$10$BAvO4Cxlt/hpU11tpcw9X.7gLMmkuApCIB1b0gXAyMO7b.hiCv4u6', '2023-04-12 08:20:12', '2023-04-12 08:20:12');
-INSERT INTO `user` VALUES (4, 'xzczxczx', 'cczxcz@gmail.com', '$2y$10$PL8cADPjQEdpnybbJoyI4ufPvaGrekCu3IbkQJSDWE1H3Wy2TYS5u', '2023-04-12 08:26:00', '2023-04-12 08:26:00');
-INSERT INTO `user` VALUES (5, 'zxczxczx', 'vvxz@gmail.om', '$2y$10$RdKtHleUhBqXtRQBLRxyoOzgGS2xBL0GI8LW9TqzV9gL1jSdMOA8i', '2023-04-12 08:26:34', '2023-04-12 08:26:34');
-INSERT INTO `user` VALUES (6, 'Dera Abdul Gani', 'deraabdulgani@gmail.com', '$2y$10$EafB872lFXtxlX/EH7dkEO7zYCjO2zWYjrcWNOuuP/paiidyGo9Hq', '2023-04-12 08:30:28', '2023-04-12 08:30:28');
+INSERT INTO `user` VALUES (1, 'dera', 'deraabdulgani@gmail.com', '1681535697_d8542db0b19c8c665516.webp', '$2y$10$B2b7z19RuP1LRIrJxOO7rO/Q4zsOfqoqs5Q3KteY9Xuxznmm1Cf.e', '2023-04-15 05:14:57', '2023-04-15 05:14:57');
 
 SET FOREIGN_KEY_CHECKS = 1;
