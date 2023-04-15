@@ -31,11 +31,4 @@ class HomeController extends BaseController
         ];
         return view('pages/register', $data);
     }
-    public function about()
-    {
-        $data = [
-            'title' => 'About'
-        ];
-        return view('pages/about', $data);
-    }
 }
